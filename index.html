@@ -3,63 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brazil Store Check</title>
+
+  <!-- Exibe como app full-screen no iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Ícone que o iPhone usa na tela inicial -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <title>Tampico Store Check</title>
+
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #e44b84;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    body{
+      margin:0;padding:0;background:#e44b84;
+      font-family:Arial,Helvetica,sans-serif;
+      height:100vh;display:flex;flex-direction:column;
+      justify-content:center;align-items:center
     }
 
-    img {
-      width: 250px;
-      margin-bottom: 40px;
+    .logo{
+      width:250px;max-width:80vw;margin-bottom:40px
     }
 
-    .start-button, .map-button {
-      font-size: 24px;
-      font-weight: bold;
-      padding: 16px 40px;
-      border: none;
-      border-radius: 16px;
-      text-decoration: none;
-      display: inline-block;
-      margin-bottom: 16px;
+    .btn{
+      display:inline-block;border:none;border-radius:16px;
+      font-weight:bold;text-decoration:none;cursor:pointer
     }
+    .start{
+      background:#28d463;color:#fff;font-size:28px;
+      padding:20px 50px;margin-bottom:20px
+    }
+    .start:hover{background:#24b859}
 
-    .start-button {
-      background-color: #28d463;
-      color: white;
+    .map{
+      background:#60cfff;color:#000;font-size:20px;
+      padding:14px 40px
     }
-
-    .start-button:hover {
-      background-color: #24b859;
-    }
-
-    .map-button {
-      background-color: #60cfff;
-      color: black;
-    }
-
-    .map-button:hover {
-      background-color: #49b6e5;
-    }
+    .map:hover{background:#49b6e5}
   </style>
 </head>
 <body>
+
   <!-- Logo -->
-  <img src="TampicoLogo.png" alt="Tampico Logo" />
+  <img src="apple-touch-icon.png" alt="Tampico Logo" class="logo">
 
   <!-- Botão START -->
-  <a href="form.html" class="start-button">START</a>
+  <a href="form.html" class="btn start">START</a>
 
-  <!-- Botão MAP logo abaixo -->
-  <a href="map.html" class="map-button">Map</a>
+  <!-- Botão MAP abaixo do START -->
+  <a href="map.html" class="btn map">Map</a>
+
 </body>
 </html>
