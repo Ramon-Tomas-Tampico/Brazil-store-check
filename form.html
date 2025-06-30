@@ -2,14 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PDV Store Check – Form</title>
+
 <style>
-  body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:20px}
-  label{display:block;margin:8px 0 4px}
-  input[type=text], input[type=number]{width:180px;padding:6px;margin-bottom:6px}
-  fieldset{border:2px solid #ccc;padding:10px;margin-bottom:16px}
-  legend{font-weight:700}
-  button{padding:10px 24px;font-weight:700;color:#fff;background:#4CAF50;border:none;border-radius:6px;cursor:pointer}
+:root{
+  --pink:#E75182; --green:#27d34d;
+  --gap:10px; --radius:10px;
+  --font-base:clamp(1rem, 3.5vw, 1.15rem);
+  --font-h2:clamp(1.4rem, 5vw, 1.8rem);
+}
+body{
+  font-family:-apple-system,Helvetica,Arial,sans-serif;
+  margin:var(--gap);
+  font-size:var(--font-base);
+}
+h2{
+  font-size:var(--font-h2);
+  color:var(--pink);
+}
+label{display:block;margin-top:var(--gap)}
+input[type=text],input[type=number]{
+  width:100%;padding:6px;
+  border-radius:var(--radius);border:1px solid #ccc
+}
+fieldset{
+  border:2px solid #ccc;border-radius:var(--radius);
+  padding:var(--gap);margin-top:18px
+}
+legend{font-weight:700;color:var(--pink)}
+button{
+  margin-top:20px;background:var(--green);color:#fff;
+  border:none;border-radius:var(--radius);
+  padding:12px 28px;font-weight:700;font-size:1.1rem;
+  cursor:pointer;width:100%
+}
 </style>
 </head>
 <body>
@@ -67,7 +94,7 @@
   </fieldset>
 
   <!-- Photos -->
-  <label>Photos (up to 4):</label>
+  <label>Photos (up to 4)</label>
   <input type="file" id="photo1" accept="image/*">
   <input type="file" id="photo2" accept="image/*">
   <input type="file" id="photo3" accept="image/*">
@@ -78,11 +105,11 @@
 </form>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec"; // <- troque
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec"; // <-- troque
 
-function base64(file) {
+function base64(file){
   return new Promise(r=>{
-    if(!file){ r(""); return; }
+    if(!file){r("");return;}
     const fr=new FileReader();
     fr.onload=()=>r(fr.result.split(",")[1]);
     fr.readAsDataURL(file);
@@ -90,47 +117,45 @@ function base64(file) {
 }
 
 async function sendData(){
-  const status = document.getElementById("status");
-  status.textContent = "Sending…";
+  const status=document.getElementById("status");
+  status.textContent="Sending…";
 
-  // Build arrays
-  const tampico = [...Array(8)].map((_,i)=>document.getElementById(`tampico_${i}`).value);
-  const delvalle= [...Array(8)].map((_,i)=>document.getElementById(`delvalle_${i}`).value);
-  const other   = [...Array(8)].map((_,i)=>document.getElementById(`other_${i}`).value);
+  // arrays
+  const tampico=[...Array(8)].map((_,i)=>document.getElementById(`tampico_${i}`).value);
+  const delvalle=[...Array(8)].map((_,i)=>document.getElementById(`delvalle_${i}`).value);
+  const other  =[...Array(8)].map((_,i)=>document.getElementById(`other_${i}`).value);
 
-  // Encode photos
-  const photos = [];
-  for (let i=1;i<=4;i++){
-    const file = document.getElementById(`photo${i}`).files[0];
+  // photos
+  const photos=[];
+  for(let i=1;i<=4;i++){
+    const file=document.getElementById(`photo${i}`).files[0];
     photos.push(await base64(file));
   }
 
-  // Geolocation
   navigator.geolocation.getCurrentPosition(async pos=>{
-    const data = {
-      storeName : document.getElementById("storeName").value,
-      city      : document.getElementById("city").value,
-      latitude  : pos.coords.latitude,
-      longitude : pos.coords.longitude,
-      tampico   : tampico,
-      delValle  : delvalle,
-      otherBrandName : document.getElementById("otherBrandName").value,
-      otherPrices    : other,
-      photos    : photos
+    const data={
+      storeName:document.getElementById("storeName").value,
+      city:document.getElementById("city").value,
+      latitude:pos.coords.latitude,
+      longitude:pos.coords.longitude,
+      tampico,
+      delValle:delvalle,
+      otherBrandName:document.getElementById("otherBrandName").value,
+      otherPrices:other,
+      photos
     };
-
     try{
-      const res = await fetch(SCRIPT_URL, {
+      const res=await fetch(SCRIPT_URL,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(data)
       });
-      const text = await res.text();
-      status.textContent = "Server: "+text;
+      const text=await res.text();
+      status.textContent="Server: "+text;
     }catch(err){
-      status.textContent = "Error: "+err;
+      status.textContent="Error: "+err;
     }
-  }, () => status.textContent="Location denied");
+  },()=>status.textContent="Location denied");
 }
 </script>
 </body>
