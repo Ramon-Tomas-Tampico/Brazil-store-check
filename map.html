@@ -1,67 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Store-Check – Map</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tampico – Map</title>
 
-<!-- Leaflet (mapas gratuitos OpenStreetMap) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-sA+e2E1Hn0z4XLaOcxEVmHm6C4e1Dac6JcJGiJTAn7Y=" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-o9N1jvHDVfG/ayWrlOZ8LbyKF90UXebLk9Z9H7uPsk0=" crossorigin=""></script>
+  <!-- Leaflet para mapas -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-sA+e2E1Hn0z4XLaOcxEVmHm6C4e1Dac6JcJGiJTAn7Y=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-o9N1jvHDVfG/ayWrlOZ8LbyKF90UXebLk9Z9H7uPsk0=" crossorigin=""></script>
 
-<style>
-  body,html{margin:0;height:100%}
-  #map{height:100%;width:100%}
-  .popup h3{margin:.2em 0;font-size:17px}
-  .popup table{font-size:14px;border-collapse:collapse}
-  .popup td{padding:2px 6px;border-bottom:1px solid #eee}
-  .popup a{color:#0645ad;text-decoration:none}
-</style>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    #map { height: 100%; width: 100%; }
+    .popup h3 { margin: 0.2em 0; font-size: 17px; }
+    .popup table { font-size: 14px; border-collapse: collapse; }
+    .popup td { padding: 2px 6px; border-bottom: 1px solid #eee; }
+    .popup a { color: #0645ad; text-decoration: none; }
+  </style>
 </head>
 <body>
 
 <div id="map"></div>
 
 <script>
-/* 1) URL do seu web-app  (GET) */
-const API = "https://script.google.com/macros/s/AKfycbz6bPCi7VQ-BV2ADeyX30lt9cHjodtBbWWm1ILPaEf6flhiNsdT0uRw_vNd-mcyW2pG/exec";
+  // ✅ Cole aqui a URL DO SEU SCRIPT DEPLOY
+  const API = "https://script.google.com/macros/s/AKfycbz6bPCi7VQ-BV2ADeyX30lt9cHjodtBbWWm1ILPaEf6flhiNsdT0uRw_vNd-mcyW2pG/exec";
 
-/* 2) cria mapa centrado no Brasil */
-const map = L.map('map').setView([-14.2350, -51.9253], 4);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19, attribution:'© OpenStreetMap'
-}).addTo(map);
+  // Inicializa o mapa
+  const map = L.map('map').setView([-14.2, -51.9], 4); // Brasil
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '© OpenStreetMap'
+  }).addTo(map);
 
-/* 3)  baixa dados e coloca marcadores */
-fetch(API)
-  .then(r=>r.json())
-  .then(list=>{
-    list.forEach(p=>{
-      if(!p.lat || !p.lng) return;          // ignora sem coordenada
+  // Carrega dados da planilha
+  fetch(API)
+    .then(r => r.json())
+    .then(data => {
+      data.forEach(p => {
+        if (!p.lat || !p.lng) return;
 
-      const marker = L.marker([+p.lat, +p.lng]).addTo(map);
+        const marker = L.marker([+p.lat, +p.lng]).addTo(map);
 
-      /* monta conteúdo do balão -------------------------- */
-      const tbl = (title,arr)=>`
-        <tr><td><strong>${title}</strong></td><td>${arr.join(" | ")}</td></tr>`;
-      const html = `
-        <div class="popup">
-          <h3>${p.store}</h3>
-          <small>${p.timestamp} – ${p.city}</small>
-          <table>
-            ${tbl('Tampico',   p.tampico)}
-            ${tbl('Del Valle', p.delValle)}
-            ${tbl(p.otherBrand || 'Other', p.otherPrices)}
-          </table>
-          ${p.photos.filter(u=>u).map((u,i)=>`<a href="${u}" target="_blank">Photo ${i+1}</a>`).join(" · ")}
-        </div>`;
+        const tbl = (label, values) => `
+          <tr><td><strong>${label}</strong></td><td>${values.join(" | ")}</td></tr>`;
 
-      marker.bindPopup(html);
+        const html = `
+          <div class="popup">
+            <h3>${p.store}</h3>
+            <small>${p.timestamp} – ${p.city}</small>
+            <table>
+              ${tbl("Tampico", p.tampico)}
+              ${tbl("Del Valle", p.delValle)}
+              ${tbl(p.otherBrand || "Other", p.otherPrices)}
+            </table>
+            ${p.photos.filter(u => u).map((u, i) => `<a href="${u}" target="_blank">Photo ${i+1}</a>`).join(" · ")}
+          </div>`;
+        
+        marker.bindPopup(html);
+      });
+    })
+    .catch(err => {
+      alert("Failed to load data.\n" + err.message);
+      console.error(err);
     });
-  })
-  .catch(err=>alert("Can’t load points:\n"+err));
 </script>
 
 </body>
