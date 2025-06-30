@@ -1,121 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PDV Map</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
- integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
- crossorigin=""/>
+ integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
-#filterName{
-  position:fixed;top:10px;left:50%;transform:translateX(-50%);
+ #filterName{position:fixed;top:10px;left:50%;transform:translateX(-50%);
   z-index:1000;padding:8px 12px;border-radius:10px;border:1px solid #aaa;
-  width:80vw;max-width:300px;font-size:1rem
-}
-td{padding:2px 6px;font-size:0.85rem}
-th{text-align:left;font-size:0.9rem}
-</style>
-</head>
-<body style="margin:0">
+  width:80vw;max-width:300px;font-size:1rem}
+ td{padding:2px 6px;font-size:.85rem}th{text-align:left;font-size:.9rem}
+</style></head><body style="margin:0">
 
-<input type="search" id="filterName" placeholder="Filter by store">
-<div id="map" style="width:100%;height:100vh;"></div>
+<input id="filterName" placeholder="Filter by store">
+<div id="map" style="width:100%;height:100vh"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
- integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
- crossorigin=""></script>
-
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-/* -------------- CONFIG ---------------- */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec";   // <-- troque
-/* -------------------------------------- */
+const API="https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec";   // troque
 
-const map = L.map('map').setView([0,0],2);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:18, attr:'&copy; OpenStreetMap contributors'
-}).addTo(map);
+const map=L.map("map").setView([0,0],2);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+ {maxZoom:18,attr:"&copy; OpenStreetMap"}).addTo(map);
 
-const redIcon = L.icon({
-  iconUrl:'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@1.0.0/img/marker-icon-red.png',
-  shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-  iconSize:[25,41], iconAnchor:[12,41], popupAnchor:[1,-34], shadowSize:[41,41]
-});
+const red=L.icon({
+ iconUrl:"https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@1.0.0/img/marker-icon-red.png",
+ shadowUrl:"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+ iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]});
 
-let pdvData = [];
+let data=[];
 
-/* --------- Função para montar o HTML do pop-up -------- */
-function buildPopup(p){
-  // helpers
-  const fmt = v => (v ? `R$ ${Number(v).toFixed(2)}` : '—');
+/* ---------- FUNÇÃO POPUP COM VALIDAÇÃO ---------- */
+function popup(p){
+ const safeArr=(arr)=>Array.isArray(arr)?arr:[];
 
-  // Tabelas
-  const makeRow = (lab,val)=>`
-      <tr><td>${lab}</td><td>${fmt(val)}</td></tr>`;
+ const priceRow=(lab,val)=>`
+   <tr><td>${lab}</td><td>${val?`R$ ${Number(val).toFixed(2)}`:"—"}</td></tr>`;
 
-  const tampicoRows   = p.tampico.map((v,i)=>makeRow(['2 L','1.5 L','1 L','450 ml','250 ml','200 ml','Tetra 1 L','Can'][i],v)).join('');
-  const delValleRows  = p.delValle.map((v,i)=>makeRow(['2 L','1.5 L','1 L','450 ml','250 ml','200 ml','Tetra 1 L','Can'][i],v)).join('');
-  const otherRows     = p.otherPrices.map((v,i)=>makeRow(['2 L','1.5 L','1 L','450 ml','250 ml','200 ml','Tetra 1 L','Can'][i],v)).join('');
+ const pac=["2 L","1.5 L","1 L","450 ml","250 ml","200 ml","Tetra 1 L","Can"];
 
-  // Fotos
-  const photoLinks = p.photos
-      .filter(u=>u)                      // remove strings vazias
-      .map((u,i)=>`<a href="${u}" target="_blank">Photo ${i+1}</a>`)
-      .join(' | ') || '—';
+ const tampico=safeArr(p.tampico).map((v,i)=>priceRow(pac[i],v)).join("");
+ const del   =safeArr(p.delValle).map((v,i)=>priceRow(pac[i],v)).join("");
+ const other =safeArr(p.otherPrices).map((v,i)=>priceRow(pac[i],v)).join("");
 
-  return `
-  <b>${p.store}</b><br>
-  <small>${p.timestamp}</small><br><hr>
-  <table>
-    <tr><th colspan="2">Tampico</th></tr>${tampicoRows}
-    <tr><th colspan="2">Del Valle Frut</th></tr>${delValleRows}
-    <tr><th colspan="2">${p.otherBrand||'Other Brand'}</th></tr>${otherRows}
-  </table>
-  <div style="margin-top:6px"><b>Photos:</b> ${photoLinks}</div>
-  `;
+ const photos=safeArr(p.photos).filter(Boolean)
+   .map((u,i)=>`<a href="${u}" target="_blank">Photo ${i+1}</a>`).join(" | ")||"—";
+
+ return `
+ <b>${p.store||"Unknown"}</b><br>
+ <small>${p.timestamp||""}</small><hr>
+ <table>
+  <tr><th colspan=2>Tampico</th></tr>${tampico}
+  <tr><th colspan=2>Del Valle Frut</th></tr>${del}
+  <tr><th colspan=2>${p.otherBrand||"Other Brand"}</th></tr>${other}
+ </table>
+ <div style="margin-top:6px"><b>Photos:</b> ${photos}</div>`;
 }
 
-/* ------------------ Carregar dados -------------------- */
-fetch(SCRIPT_URL)
-  .then(r=>r.json())
-  .then(data=>{
-    pdvData = data;
-    data.forEach(p=>{
-      if(p.lat && p.lng){
-        const m = L.marker([p.lat,p.lng],{icon:redIcon}).addTo(map)
-          .bindPopup(buildPopup(p), {maxWidth:300});
-        p.marker = m;
-      }
-    });
-  })
-  .catch(console.error);
-
-/* ----------- Filtrar pelo input de busca -------------- */
-document.getElementById('filterName').oninput = e=>{
-  const term = e.target.value.toLowerCase();
-  pdvData.forEach(p=>{
-    if(!p.marker) return;
-    const show = term==='' || p.store.toLowerCase().includes(term);
-    if(show){
-      if(!map.hasLayer(p.marker)) p.marker.addTo(map);
-    }else{
-      if(map.hasLayer(p.marker)) map.removeLayer(p.marker);
-    }
+/* ---------- CARREGAR DADOS ---------- */
+fetch(API).then(r=>r.json()).then(json=>{
+  data=json;
+  json.forEach(p=>{
+    if(!p.lat||!p.lng) return;
+    const m=L.marker([p.lat,p.lng],{icon:red}).addTo(map)
+      .bindPopup(popup(p),{maxWidth:300});
+    p.marker=m;
   });
+}).catch(console.error);
+
+/* ---------- FILTRO ---------- */
+document.getElementById("filterName").oninput=e=>{
+ const term=e.target.value.toLowerCase();
+ data.forEach(p=>{
+   if(!p.marker) return;
+   const show=term===""||p.store.toLowerCase().includes(term);
+   show? p.marker.addTo(map): map.removeLayer(p.marker);
+ });
 };
 
-/* -------- Mostrar posição atual do usuário ------------ */
+/* ---------- LOCALIZAÇÃO USUÁRIO ---------- */
 if("geolocation" in navigator){
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const {latitude,longitude} = pos.coords;
-    L.marker([latitude,longitude])
-      .addTo(map)
-      .bindPopup("You are here")
-      .openPopup();
-    map.setView([latitude,longitude],13);
-  });
+ navigator.geolocation.getCurrentPosition(pos=>{
+  const {latitude,longitude}=pos.coords;
+  L.marker([latitude,longitude]).addTo(map).bindPopup("You are here").openPopup();
+  map.setView([latitude,longitude],13);
+ });
 }
 </script>
-</body>
-</html>
+</body></html>
