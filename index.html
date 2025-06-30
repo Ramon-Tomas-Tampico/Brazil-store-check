@@ -15,7 +15,6 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      position: relative;
     }
 
     img {
@@ -23,17 +22,20 @@
       margin-bottom: 40px;
     }
 
+    .start-button, .map-button {
+      font-size: 24px;
+      font-weight: bold;
+      padding: 16px 40px;
+      border: none;
+      border-radius: 16px;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
     .start-button {
       background-color: #28d463;
       color: white;
-      font-size: 28px;
-      font-weight: bold;
-      padding: 20px 50px;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-      text-decoration: none;
-      margin-bottom: 20px;
     }
 
     .start-button:hover {
@@ -41,17 +43,8 @@
     }
 
     .map-button {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
       background-color: #60cfff;
       color: black;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 20px;
-      text-decoration: none;
     }
 
     .map-button:hover {
@@ -66,7 +59,7 @@
   <!-- Botão START -->
   <a href="form.html" class="start-button">START</a>
 
-  <!-- Botão MAP fixo no canto inferior esquerdo -->
+  <!-- Botão MAP logo abaixo -->
   <a href="map.html" class="map-button">Map</a>
 </body>
 </html>
