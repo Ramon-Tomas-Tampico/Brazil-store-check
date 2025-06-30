@@ -1,162 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PDV Store Check – Form</title>
-
-<style>
-:root{
-  --pink:#E75182; --green:#27d34d;
-  --gap:10px; --radius:10px;
-  --font-base:clamp(1rem, 3.5vw, 1.15rem);
-  --font-h2:clamp(1.4rem, 5vw, 1.8rem);
-}
-body{
-  font-family:-apple-system,Helvetica,Arial,sans-serif;
-  margin:var(--gap);
-  font-size:var(--font-base);
-}
-h2{
-  font-size:var(--font-h2);
-  color:var(--pink);
-}
-label{display:block;margin-top:var(--gap)}
-input[type=text],input[type=number]{
-  width:100%;padding:6px;
-  border-radius:var(--radius);border:1px solid #ccc
-}
-fieldset{
-  border:2px solid #ccc;border-radius:var(--radius);
-  padding:var(--gap);margin-top:18px
-}
-legend{font-weight:700;color:var(--pink)}
-button{
-  margin-top:20px;background:var(--green);color:#fff;
-  border:none;border-radius:var(--radius);
-  padding:12px 28px;font-weight:700;font-size:1.1rem;
-  cursor:pointer;width:100%
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDV Form – Store Check</title>
+  <style>
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f5f5}
+    .wrapper{max-width:600px;margin:0 auto;padding:20px}
+    h1{text-align:center;color:#333}
+    fieldset{border:1px solid #ccc;margin-bottom:20px;padding:16px;border-radius:8px}
+    legend{font-weight:bold}
+    label{display:block;margin-top:12px;font-size:14px}
+    input[type=text],input[type=number]{width:100%;padding:8px;font-size:14px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    button{display:block;width:100%;padding:14px;font-size:16px;font-weight:bold;
+      background:#28d463;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:20px}
+    button:hover{background:#24b859}
+    .msg{margin-top:12px;font-weight:bold;text-align:center}
+  </style>
 </head>
 <body>
+  <div class="wrapper">
+    <h1>Point-of-Sale Form</h1>
 
-<h2>Point-of-Sale Registration</h2>
+    <form id="posForm">
+      <!-- PDV info -->
+      <fieldset>
+        <legend>Store information</legend>
+        <label>Store name
+          <input type="text" id="store" required>
+        </label>
+        <label>City
+          <input type="text" id="city" required>
+        </label>
+      </fieldset>
 
-<form id="pdvForm">
-  <!-- Basic info -->
-  <label>Store Name</label>
-  <input type="text" id="storeName" required>
+      <!-- Prices – Tampico -->
+      <fieldset>
+        <legend>Tampico Prices</legend>
+        <div class="grid">
+          <label>2 L <input class="tampico" type="number" step="0.01"></label>
+          <label>1.5 L <input class="tampico" type="number" step="0.01"></label>
+          <label>1 L <input class="tampico" type="number" step="0.01"></label>
+          <label>450 ml <input class="tampico" type="number" step="0.01"></label>
+          <label>250 ml <input class="tampico" type="number" step="0.01"></label>
+          <label>200 ml <input class="tampico" type="number" step="0.01"></label>
+          <label>Tetra 1 L <input class="tampico" type="number" step="0.01"></label>
+          <label>Can <input class="tampico" type="number" step="0.01"></label>
+        </div>
+      </fieldset>
 
-  <label>City</label>
-  <input type="text" id="city" required>
+      <!-- Prices – Del Valle -->
+      <fieldset>
+        <legend>Del Valle Prices</legend>
+        <div class="grid">
+          <label>2 L <input class="delvalle" type="number" step="0.01"></label>
+          <label>1.5 L <input class="delvalle" type="number" step="0.01"></label>
+          <label>1 L <input class="delvalle" type="number" step="0.01"></label>
+          <label>450 ml <input class="delvalle" type="number" step="0.01"></label>
+          <label>250 ml <input class="delvalle" type="number" step="0.01"></label>
+          <label>200 ml <input class="delvalle" type="number" step="0.01"></label>
+          <label>Tetra 1 L <input class="delvalle" type="number" step="0.01"></label>
+          <label>Can <input class="delvalle" type="number" step="0.01"></label>
+        </div>
+      </fieldset>
 
-  <!-- Tampico block -->
-  <fieldset>
-    <legend>Tampico</legend>
-    <label>2 L</label><input type="number" step="0.01" id="tampico_0">
-    <label>1.5 L</label><input type="number" step="0.01" id="tampico_1">
-    <label>1 L</label><input type="number" step="0.01" id="tampico_2">
-    <label>450 ml</label><input type="number" step="0.01" id="tampico_3">
-    <label>250 ml</label><input type="number" step="0.01" id="tampico_4">
-    <label>200 ml</label><input type="number" step="0.01" id="tampico_5">
-    <label>Tetra 1 L</label><input type="number" step="0.01" id="tampico_6">
-    <label>Can</label><input type="number" step="0.01" id="tampico_7">
-  </fieldset>
+      <!-- Prices – Other Brand -->
+      <fieldset>
+        <legend>Other Brand Prices</legend>
+        <label>Brand name
+          <input type="text" id="otherBrand">
+        </label>
+        <div class="grid">
+          <label>2 L <input class="other" type="number" step="0.01"></label>
+          <label>1.5 L <input class="other" type="number" step="0.01"></label>
+          <label>1 L <input class="other" type="number" step="0.01"></label>
+          <label>450 ml <input class="other" type="number" step="0.01"></label>
+          <label>250 ml <input class="other" type="number" step="0.01"></label>
+          <label>200 ml <input class="other" type="number" step="0.01"></label>
+          <label>Tetra 1 L <input class="other" type="number" step="0.01"></label>
+          <label>Can <input class="other" type="number" step="0.01"></label>
+        </div>
+      </fieldset>
 
-  <!-- Del Valle block -->
-  <fieldset>
-    <legend>Del Valle Frut</legend>
-    <label>2 L</label><input type="number" step="0.01" id="delvalle_0">
-    <label>1.5 L</label><input type="number" step="0.01" id="delvalle_1">
-    <label>1 L</label><input type="number" step="0.01" id="delvalle_2">
-    <label>450 ml</label><input type="number" step="0.01" id="delvalle_3">
-    <label>250 ml</label><input type="number" step="0.01" id="delvalle_4">
-    <label>200 ml</label><input type="number" step="0.01" id="delvalle_5">
-    <label>Tetra 1 L</label><input type="number" step="0.01" id="delvalle_6">
-    <label>Can</label><input type="number" step="0.01" id="delvalle_7">
-  </fieldset>
+      <!-- Hidden lat/lng -->
+      <input type="hidden" id="lat">
+      <input type="hidden" id="lng">
 
-  <!-- Other Brand block -->
-  <fieldset>
-    <legend>Other Brand</legend>
-    <label>Brand Name</label>
-    <input type="text" id="otherBrandName">
+      <button type="submit">Save Point-Of-Sale</button>
+      <div class="msg" id="msg"></div>
+    </form>
+  </div>
 
-    <label>2 L</label><input type="number" step="0.01" id="other_0">
-    <label>1.5 L</label><input type="number" step="0.01" id="other_1">
-    <label>1 L</label><input type="number" step="0.01" id="other_2">
-    <label>450 ml</label><input type="number" step="0.01" id="other_3">
-    <label>250 ml</label><input type="number" step="0.01" id="other_4">
-    <label>200 ml</label><input type="number" step="0.01" id="other_5">
-    <label>Tetra 1 L</label><input type="number" step="0.01" id="other_6">
-    <label>Can</label><input type="number" step="0.01" id="other_7">
-  </fieldset>
+  <script>
+    /* ============ CONFIG ============ */
+    const API = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec";
 
-  <!-- Photos -->
-  <label>Photos (up to 4)</label>
-  <input type="file" id="photo1" accept="image/*">
-  <input type="file" id="photo2" accept="image/*">
-  <input type="file" id="photo3" accept="image/*">
-  <input type="file" id="photo4" accept="image/*">
-
-  <button type="button" onclick="sendData()">Save Point-of-Sale</button>
-  <p id="status"></p>
-</form>
-
-<script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec"; // <-- troque
-
-function base64(file){
-  return new Promise(r=>{
-    if(!file){r("");return;}
-    const fr=new FileReader();
-    fr.onload=()=>r(fr.result.split(",")[1]);
-    fr.readAsDataURL(file);
-  });
-}
-
-async function sendData(){
-  const status=document.getElementById("status");
-  status.textContent="Sending…";
-
-  // arrays
-  const tampico=[...Array(8)].map((_,i)=>document.getElementById(`tampico_${i}`).value);
-  const delvalle=[...Array(8)].map((_,i)=>document.getElementById(`delvalle_${i}`).value);
-  const other  =[...Array(8)].map((_,i)=>document.getElementById(`other_${i}`).value);
-
-  // photos
-  const photos=[];
-  for(let i=1;i<=4;i++){
-    const file=document.getElementById(`photo${i}`).files[0];
-    photos.push(await base64(file));
-  }
-
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const data={
-      storeName:document.getElementById("storeName").value,
-      city:document.getElementById("city").value,
-      latitude:pos.coords.latitude,
-      longitude:pos.coords.longitude,
-      tampico,
-      delValle:delvalle,
-      otherBrandName:document.getElementById("otherBrandName").value,
-      otherPrices:other,
-      photos
-    };
-    try{
-      const res=await fetch(SCRIPT_URL,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(data)
-      });
-      const text=await res.text();
-      status.textContent="Server: "+text;
-    }catch(err){
-      status.textContent="Error: "+err;
+    /* ============ GEOLOCATION ============ */
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById("lat").value = pos.coords.latitude;
+        document.getElementById("lng").value = pos.coords.longitude;
+      }, err => console.warn("Geolocation error:", err.message));
+    } else {
+      console.warn("Geolocation not supported");
     }
-  },()=>status.textContent="Location denied");
-}
-</script>
+
+    /* ============ FORM SUBMIT ============ */
+    document.getElementById("posForm").addEventListener("submit", async evt => {
+      evt.preventDefault();
+      const msg = document.getElementById("msg");
+      msg.textContent = "Saving…";
+
+      const payload = {
+        storeName      : document.getElementById("store").value.trim(),
+        city           : document.getElementById("city").value.trim(),
+        latitude       : parseFloat(document.getElementById("lat").value) || "",
+        longitude      : parseFloat(document.getElementById("lng").value) || "",
+        tampico        : [...document.querySelectorAll(".tampico") ].map(i=>i.value.trim()),
+        delValle       : [...document.querySelectorAll(".delvalle")].map(i=>i.value.trim()),
+        otherBrandName : document.getElementById("otherBrand").value.trim(),
+        otherPrices    : [...document.querySelectorAll(".other")   ].map(i=>i.value.trim()),
+        photos         : [] // você pode preencher depois
+      };
+
+      try{
+        const res = await fetch(API, {
+          method : "POST",
+          headers: {"Content-Type":"application/json"},
+          body   : JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        const data = await res.json(); // espera {"status":"OK"} ou {"error":...}
+
+        if (data.status === "OK") {
+          msg.style.color = "green";
+          msg.textContent = "Data saved ✓";
+          evt.target.reset();
+        } else {
+          throw new Error(data.error || "Unknown error");
+        }
+
+      }catch(err){
+        msg.style.color = "red";
+        msg.textContent = "Error: " + err.message;
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
