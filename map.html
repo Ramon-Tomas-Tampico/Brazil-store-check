@@ -1,71 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tampico – Map</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tampico – Map</title>
 
-  <!-- Leaflet para mapas -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+e2E1Hn0z4XLaOcxEVmHm6C4e1Dac6JcJGiJTAn7Y=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9N1jvHDVfG/ayWrlOZ8LbyKF90UXebLk9Z9H7uPsk0=" crossorigin=""></script>
+<!-- Leaflet -->
+<link rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-sA+e2E1Hn0z4XLaOcxEVmHm6C4e1Dac6JcJGiJTAn7Y="
+  crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-o9N1jvHDVfG/ayWrlOZ8LbyKF90UXebLk9Z9H7uPsk0="
+  crossorigin="anonymous"></script>
 
-  <style>
-    html, body { margin: 0; height: 100%; }
-    #map { height: 100%; width: 100%; }
-    .popup h3 { margin: 0.2em 0; font-size: 17px; }
-    .popup table { font-size: 14px; border-collapse: collapse; }
-    .popup td { padding: 2px 6px; border-bottom: 1px solid #eee; }
-    .popup a { color: #0645ad; text-decoration: none; }
-  </style>
+<style>
+html,body,#map{height:100%;margin:0}
+.popup h3{margin:.2em 0;font-size:1rem}
+.popup table{font-size:.85rem;border-collapse:collapse}
+.popup td{padding:2px 6px;border-bottom:1px solid #eee}
+.popup a{color:#0654ad}
+</style>
 </head>
 <body>
-
 <div id="map"></div>
 
-<script>
-  // ✅ Cole aqui a URL DO SEU SCRIPT DEPLOY
-  const API = "https://script.google.com/macros/s/AKfycbz6bPCi7VQ-BV2ADeyX30lt9cHjodtBbWWm1ILPaEf6flhiNsdT0uRw_vNd-mcyW2pG/exec";
+<script type="module">
+/* 🔗 cole aqui O MESMO URL usado no form ------------------- */
+const API="https://script.google.com/macros/s/AKfycbz6bPCi7VQ-BV2ADeyX30lt9cHjodtBbWWm1ILPaEf6flhiNsdT0uRw_vNd-mcyW2pG/exec";
 
-  // Inicializa o mapa
-  const map = L.map('map').setView([-14.2, -51.9], 4); // Brasil
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, attribution: '© OpenStreetMap'
-  }).addTo(map);
+/* ---------- inicia mapa Brasil --------------------------- */
+const map=L.map('map').setView([-14.235,-51.925],4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19,attribution:'© OpenStreetMap'
+}).addTo(map);
 
-  // Carrega dados da planilha
-  fetch(API)
-    .then(r => r.json())
-    .then(data => {
-      data.forEach(p => {
-        if (!p.lat || !p.lng) return;
+/* ---------- carrega linhas da planilha ------------------- */
+try{
+  const res=await fetch(API);            // GET sem parâmetros
+  if(!res.ok) throw new Error(res.statusText);
+  const json=await res.json();
 
-        const marker = L.marker([+p.lat, +p.lng]).addTo(map);
+  json.forEach(p=>{
+    if(!p.lat||!p.lng) return;           // ignora linhas sem geo
+    const marker=L.marker([+p.lat,+p.lng]).addTo(map);
 
-        const tbl = (label, values) => `
-          <tr><td><strong>${label}</strong></td><td>${values.join(" | ")}</td></tr>`;
+    const row=(lbl,val)=>`
+      <tr><td><strong>${lbl}</strong></td><td>${val.join(" | ")}</td></tr>`;
 
-        const html = `
-          <div class="popup">
-            <h3>${p.store}</h3>
-            <small>${p.timestamp} – ${p.city}</small>
-            <table>
-              ${tbl("Tampico", p.tampico)}
-              ${tbl("Del Valle", p.delValle)}
-              ${tbl(p.otherBrand || "Other", p.otherPrices)}
-            </table>
-            ${p.photos.filter(u => u).map((u, i) => `<a href="${u}" target="_blank">Photo ${i+1}</a>`).join(" · ")}
-          </div>`;
-        
-        marker.bindPopup(html);
-      });
-    })
-    .catch(err => {
-      alert("Failed to load data.\n" + err.message);
-      console.error(err);
-    });
+    const html=`
+      <div class="popup">
+        <h3>${p.store}</h3>
+        <small>${p.timestamp} – ${p.city}</small>
+        <table>
+          ${row("Tampico",p.tampico)}
+          ${row("Del Valle",p.delValle)}
+          ${row(p.otherBrand||"Other",p.otherPrices)}
+        </table>
+        ${p.photos.filter(u=>u).map(
+            (u,i)=>`<a href="${u}" target="_blank">Photo ${i+1}</a>`
+          ).join(" · ")}
+      </div>`;
+    marker.bindPopup(html);
+  });
+
+}catch(err){
+  alert("Erro ao carregar dados:\n"+err.message);
+  console.error(err);
+}
 </script>
-
 </body>
 </html>
