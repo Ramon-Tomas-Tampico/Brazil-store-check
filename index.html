@@ -6,20 +6,21 @@
   <title>Brazil Store Check</title>
   <style>
     body {
-      background-color: #e44b84; /* cor rosa da marca */
       margin: 0;
-      height: 100vh;
+      padding: 0;
+      background-color: #e44b84;
       font-family: Arial, sans-serif;
-      position: relative;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      position: relative;
     }
 
     img {
       width: 250px;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
     }
 
     .start-button {
@@ -32,6 +33,7 @@
       border-radius: 20px;
       cursor: pointer;
       text-decoration: none;
+      margin-bottom: 20px;
     }
 
     .start-button:hover {
@@ -39,7 +41,7 @@
     }
 
     .map-button {
-      position: fixed;
+      position: absolute;
       bottom: 20px;
       left: 20px;
       background-color: #60cfff;
@@ -58,10 +60,13 @@
   </style>
 </head>
 <body>
+  <!-- Logo -->
   <img src="TampicoLogo.png" alt="Tampico Logo" />
+
+  <!-- Botão START -->
   <a href="form.html" class="start-button">START</a>
 
-  <!-- Botão fixo para Map -->
+  <!-- Botão MAP fixo no canto inferior esquerdo -->
   <a href="map.html" class="map-button">Map</a>
 </body>
 </html>
