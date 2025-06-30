@@ -2,49 +2,65 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PDV Map</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+<style>
+#filterName{
+  position:fixed;top:10px;left:50%;transform:translateX(-50%);
+  z-index:1000;padding:8px 12px;border-radius:10px;border:1px solid #aaa;
+  width:80vw;max-width:300px;font-size:1rem
+}
+</style>
 </head>
-<body style="margin:0;">
-<input type="search" id="filterName" placeholder="Filter by store" 
-       style="position:absolute;top:10px;left:10px;z-index:1000;padding:5px;">
-<div id="map" style="width:100%;height:90vh;"></div>
+<body style="margin:0">
+
+<input type="search" id="filterName" placeholder="Filter by store">
+<div id="map" style="width:100%;height:100vh;"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec"; // <- troque
-const map = L.map('map').setView([0,0],2);
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec"; // <-- troque
+const map=L.map('map').setView([0,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   maxZoom:18,attr:'&copy; OpenStreetMap contributors'}).addTo(map);
-const redIcon=L.icon({iconUrl:'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@1.0.0/img/marker-icon-red.png',
-shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]});
+
+const redIcon=L.icon({
+  iconUrl:'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@1.0.0/img/marker-icon-red.png',
+  shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+  iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]
+});
 let pdvData=[];
 fetch(SCRIPT_URL).then(r=>r.json()).then(data=>{
   pdvData=data;
   data.forEach(p=>{
     if(p.lat&&p.lng){
       const m=L.marker([p.lat,p.lng],{icon:redIcon}).addTo(map)
-      .bindPopup(`<b>${p.store}</b><br>${p.city||''}`);
+        .bindPopup(`<b>${p.store}</b><br>${p.city||''}`);
       p.marker=m;
     }
   });
-}).catch(e=>console.error(e));
-document.getElementById('filterName').oninput = e=>{
+}).catch(console.error);
+
+document.getElementById('filterName').oninput=e=>{
   const term=e.target.value.toLowerCase();
   pdvData.forEach(p=>{
     if(!p.marker)return;
     const show=term===''||p.store.toLowerCase().includes(term);
-    if(show){ if(!map.hasLayer(p.marker)) p.marker.addTo(map);}
-    else{ if(map.hasLayer(p.marker)) map.removeLayer(p.marker);}
+    if(show){if(!map.hasLayer(p.marker))p.marker.addTo(map);}
+    else{if(map.hasLayer(p.marker))map.removeLayer(p.marker);}
   });
 };
+
 if("geolocation"in navigator){
   navigator.geolocation.getCurrentPosition(pos=>{
     const {latitude,longitude}=pos.coords;
-    const user=L.marker([latitude,longitude]).addTo(map)
+    L.marker([latitude,longitude]).addTo(map)
       .bindPopup("You are here").openPopup();
     map.setView([latitude,longitude],13);
   });
