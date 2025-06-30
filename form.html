@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>PDV Store Check – Form</title>
+<style>
+  body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:20px}
+  label{display:block;margin:8px 0 4px}
+  input[type=text], input[type=number]{width:180px;padding:6px;margin-bottom:6px}
+  fieldset{border:2px solid #ccc;padding:10px;margin-bottom:16px}
+  legend{font-weight:700}
+  button{padding:10px 24px;font-weight:700;color:#fff;background:#4CAF50;border:none;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<h2>Point-of-Sale Registration</h2>
+
+<form id="pdvForm">
+  <!-- Basic info -->
+  <label>Store Name</label>
+  <input type="text" id="storeName" required>
+
+  <label>City</label>
+  <input type="text" id="city" required>
+
+  <!-- Tampico block -->
+  <fieldset>
+    <legend>Tampico</legend>
+    <label>2 L</label><input type="number" step="0.01" id="tampico_0">
+    <label>1.5 L</label><input type="number" step="0.01" id="tampico_1">
+    <label>1 L</label><input type="number" step="0.01" id="tampico_2">
+    <label>450 ml</label><input type="number" step="0.01" id="tampico_3">
+    <label>250 ml</label><input type="number" step="0.01" id="tampico_4">
+    <label>200 ml</label><input type="number" step="0.01" id="tampico_5">
+    <label>Tetra 1 L</label><input type="number" step="0.01" id="tampico_6">
+    <label>Can</label><input type="number" step="0.01" id="tampico_7">
+  </fieldset>
+
+  <!-- Del Valle block -->
+  <fieldset>
+    <legend>Del Valle Frut</legend>
+    <label>2 L</label><input type="number" step="0.01" id="delvalle_0">
+    <label>1.5 L</label><input type="number" step="0.01" id="delvalle_1">
+    <label>1 L</label><input type="number" step="0.01" id="delvalle_2">
+    <label>450 ml</label><input type="number" step="0.01" id="delvalle_3">
+    <label>250 ml</label><input type="number" step="0.01" id="delvalle_4">
+    <label>200 ml</label><input type="number" step="0.01" id="delvalle_5">
+    <label>Tetra 1 L</label><input type="number" step="0.01" id="delvalle_6">
+    <label>Can</label><input type="number" step="0.01" id="delvalle_7">
+  </fieldset>
+
+  <!-- Other Brand block -->
+  <fieldset>
+    <legend>Other Brand</legend>
+    <label>Brand Name</label>
+    <input type="text" id="otherBrandName">
+
+    <label>2 L</label><input type="number" step="0.01" id="other_0">
+    <label>1.5 L</label><input type="number" step="0.01" id="other_1">
+    <label>1 L</label><input type="number" step="0.01" id="other_2">
+    <label>450 ml</label><input type="number" step="0.01" id="other_3">
+    <label>250 ml</label><input type="number" step="0.01" id="other_4">
+    <label>200 ml</label><input type="number" step="0.01" id="other_5">
+    <label>Tetra 1 L</label><input type="number" step="0.01" id="other_6">
+    <label>Can</label><input type="number" step="0.01" id="other_7">
+  </fieldset>
+
+  <!-- Photos -->
+  <label>Photos (up to 4):</label>
+  <input type="file" id="photo1" accept="image/*">
+  <input type="file" id="photo2" accept="image/*">
+  <input type="file" id="photo3" accept="image/*">
+  <input type="file" id="photo4" accept="image/*">
+
+  <button type="button" onclick="sendData()">Save Point-of-Sale</button>
+  <p id="status"></p>
+</form>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec"; // <- troque
+
+function base64(file) {
+  return new Promise(r=>{
+    if(!file){ r(""); return; }
+    const fr=new FileReader();
+    fr.onload=()=>r(fr.result.split(",")[1]);
+    fr.readAsDataURL(file);
+  });
+}
+
+async function sendData(){
+  const status = document.getElementById("status");
+  status.textContent = "Sending…";
+
+  // Build arrays
+  const tampico = [...Array(8)].map((_,i)=>document.getElementById(`tampico_${i}`).value);
+  const delvalle= [...Array(8)].map((_,i)=>document.getElementById(`delvalle_${i}`).value);
+  const other   = [...Array(8)].map((_,i)=>document.getElementById(`other_${i}`).value);
+
+  // Encode photos
+  const photos = [];
+  for (let i=1;i<=4;i++){
+    const file = document.getElementById(`photo${i}`).files[0];
+    photos.push(await base64(file));
+  }
+
+  // Geolocation
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const data = {
+      storeName : document.getElementById("storeName").value,
+      city      : document.getElementById("city").value,
+      latitude  : pos.coords.latitude,
+      longitude : pos.coords.longitude,
+      tampico   : tampico,
+      delValle  : delvalle,
+      otherBrandName : document.getElementById("otherBrandName").value,
+      otherPrices    : other,
+      photos    : photos
+    };
+
+    try{
+      const res = await fetch(SCRIPT_URL, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(data)
+      });
+      const text = await res.text();
+      status.textContent = "Server: "+text;
+    }catch(err){
+      status.textContent = "Error: "+err;
+    }
+  }, () => status.textContent="Location denied");
+}
+</script>
+</body>
+</html>
