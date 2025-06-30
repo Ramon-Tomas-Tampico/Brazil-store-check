@@ -2,72 +2,98 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tampico – Map</title>
 
 <!-- Leaflet -->
 <link rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-sA+e2E1Hn0z4XLaOcxEVmHm6C4e1Dac6JcJGiJTAn7Y="
-  crossorigin="anonymous">
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha512-o8U3bIljEV+WdAoL+z9wM9ZLluurGl+tD9xm8uZCGRCJhOJeKPSKMdt​+J1Nq9dX9xgVeDgRqLUFVViwXg1rQA=="
+      crossorigin="anonymous">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-o9N1jvHDVfG/ayWrlOZ8LbyKF90UXebLk9Z9H7uPsk0="
-  crossorigin="anonymous"></script>
+        integrity="sha512-GmNlw+nT7ZMiB4gE7cFObU/Z3mr6H5dZ8350D1FkFe0nK14ukg0RnD2A​G0C+Cc2CTwjYxm0vB6e1HBfBMChkA=="
+        crossorigin="anonymous"></script>
 
 <style>
-html,body,#map{height:100%;margin:0}
-.popup h3{margin:.2em 0;font-size:1rem}
-.popup table{font-size:.85rem;border-collapse:collapse}
-.popup td{padding:2px 6px;border-bottom:1px solid #eee}
-.popup a{color:#0654ad}
+  html,body,#map{height:100%;margin:0}
+  .popup h3{margin:.2em 0;font-size:17px}
+  .popup table{font-size:13px;border-collapse:collapse;width:100%}
+  .popup th,.popup td{padding:2px 4px;border-bottom:1px solid #eee;text-align:left}
+  .popup th{white-space:nowrap;font-weight:bold}
+  .popup a{color:#0078ff;text-decoration:none}
 </style>
 </head>
 <body>
 <div id="map"></div>
 
-<script type="module">
-/* 🔗 cole aqui O MESMO URL usado no form ------------------- */
-const API="https://script.google.com/macros/s/AKfycbz6bPCi7VQ-BV2ADeyX30lt9cHjodtBbWWm1ILPaEf6flhiNsdT0uRw_vNd-mcyW2pG/exec";
+<script>
+/* --------- CONFIG ---------- */
+const API = "https://script.google.com/macros/s/AKfycbz6bPCi7VQ-BV2ADeyX30lt9cHjodtBbWWm1ILPaEf6flhiNsdT0uRw_vNd-mcyW2pG/exec";
+const SIZES = ["2 L","1.5 L","1 L","450 ml","250 ml","200 ml","Tetra 1 L","Can"];
 
-/* ---------- inicia mapa Brasil --------------------------- */
-const map=L.map('map').setView([-14.235,-51.925],4);
+/* --------- MAPA ------------ */
+const map = L.map('map').setView([-14.2,-51.9],4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19,attribution:'© OpenStreetMap'
+  attribution:'&copy; OpenStreetMap'
 }).addTo(map);
 
-/* ---------- carrega linhas da planilha ------------------- */
-try{
-  const res=await fetch(API);            // GET sem parâmetros
-  if(!res.ok) throw new Error(res.statusText);
-  const json=await res.json();
+/* --- ícone azul-claro para a posição actual --- */
+const userIcon = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-sky.png',
+  shadowUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize:[25,41],iconAnchor:[12,41],popupAnchor:[1,-34],shadowSize:[41,41]
+});
 
-  json.forEach(p=>{
-    if(!p.lat||!p.lng) return;           // ignora linhas sem geo
-    const marker=L.marker([+p.lat,+p.lng]).addTo(map);
+/* marcador da posição actual */
+navigator.geolocation.getCurrentPosition(pos=>{
+  const me=[pos.coords.latitude,pos.coords.longitude];
+  L.marker(me,{icon:userIcon,title:"You"})
+    .addTo(map)
+    .bindPopup("You are here")
+    .openPopup();
+});
 
-    const row=(lbl,val)=>`
-      <tr><td><strong>${lbl}</strong></td><td>${val.join(" | ")}</td></tr>`;
-
-    const html=`
-      <div class="popup">
-        <h3>${p.store}</h3>
-        <small>${p.timestamp} – ${p.city}</small>
-        <table>
-          ${row("Tampico",p.tampico)}
-          ${row("Del Valle",p.delValle)}
-          ${row(p.otherBrand||"Other",p.otherPrices)}
-        </table>
-        ${p.photos.filter(u=>u).map(
-            (u,i)=>`<a href="${u}" target="_blank">Photo ${i+1}</a>`
-          ).join(" · ")}
-      </div>`;
-    marker.bindPopup(html);
-  });
-
-}catch(err){
-  alert("Erro ao carregar dados:\n"+err.message);
-  console.error(err);
+/* --------- HELPERS ---------- */
+function tableRows(arr){
+  return SIZES.map((s,i)=>`
+    <tr><th>${s}</th><td>${arr[i]||"-"}</td></tr>`).join("");
 }
+function photoLinks(arr){
+  return arr.filter(u=>u)
+            .map((u,i)=>`<a href="${u}" target="_blank">Photo ${i+1}</a>`)
+            .join(" · ") || "(no photos)";
+}
+
+/* --------- BUSCA E DESENHA ---------- */
+fetch(API)
+  .then(r=>r.json())
+  .then(list=>{
+    const bounds=[];
+    list.forEach(p=>{
+      const lat=Number(p.lat), lng=Number(p.lng);
+      if(!isFinite(lat)||!isFinite(lng)) return;
+
+      const html = `
+        <div class="popup">
+          <h3>${p.store}</h3>
+          <small>${p.city} – ${p.timestamp}</small><hr>
+          <table>
+            <tr><th colspan="2">Tampico</th></tr>${tableRows(p.tampico)}
+            <tr><th colspan="2">Del Valle Frut</th></tr>${tableRows(p.delValle)}
+            <tr><th colspan="2">${p.otherBrand||"Other Brand"}</th></tr>${tableRows(p.otherPrices)}
+          </table>
+          <div style="margin-top:6px">${photoLinks(p.photos)}</div>
+        </div>`;
+
+      L.marker([lat,lng]).addTo(map).bindPopup(html,{maxWidth:260});
+      bounds.push([lat,lng]);
+    });
+    if(bounds.length) map.fitBounds(bounds,{padding:[30,30]});
+  })
+  .catch(err=>{
+    alert("Erro ao buscar dados, ver Console.");
+    console.error(err);
+  });
 </script>
 </body>
 </html>
