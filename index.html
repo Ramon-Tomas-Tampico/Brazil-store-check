@@ -2,40 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PDV Store Check – Home</title>
+
 <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-    background: #E75182;           /* brand pink */
-    position: relative;
-    font-family: -apple-system, Helvetica, Arial, sans-serif;
-  }
-  .logo {
-    max-width: 260px;
-    display: block;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .btn {
-    font-weight: 700; color:#fff; border:none; cursor:pointer;
-    border-radius:12px; text-decoration:none;
-  }
-  .start {
-    background:#4CAF50; padding:16px 40px; font-size:22px;
-    position:absolute; top:60%; left:50%; transform:translateX(-50%);
-  }
-  .map  {
-    background:#4FC3F7; padding:10px 24px; font-size:14px;
-    position:absolute; bottom:24px; left:24px;
-  }
+:root{
+  --pink:#E75182;
+  --green:#27d34d;
+  --blue:#4FC3F7;
+  --radius:14px;
+  --font-lg:clamp(1.4rem, 4vw, 2.2rem);
+  --font-sm:clamp(0.9rem, 3vw, 1.1rem);
+}
+
+html,body{
+  height:100%; margin:0;
+  font-family:-apple-system,Helvetica,Arial,sans-serif;
+  background:var(--pink);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+
+.logo{
+  width:80vw;       /* 80 % da largura da tela */
+  max-width:320px;  /* mas nunca maior que 320 px */
+  display:block;
+}
+
+.btn{
+  font-weight:700; color:#fff; border:none;
+  border-radius:var(--radius); text-decoration:none;
+  cursor:pointer; display:inline-block;
+}
+
+.start{
+  background:var(--green);
+  padding:14px 48px;
+  font-size:var(--font-lg);
+  margin-top:8vh;
+}
+
+.map{
+  background:var(--blue);
+  padding:8px 28px;
+  font-size:var(--font-sm);
+  position:fixed; left:3%; bottom:3%;
+}
 </style>
 </head>
 <body>
 
-<img src="TampicoLogo.png" alt="Tampico Logo" class="logo" />
+<!-- ajuste a extensão se for .png -->
+<img src="TampicoLogo.jpeg" alt="Tampico Logo" class="logo">
 
 <a href="form.html" class="btn start">START</a>
 <a href="map.html"  class="btn map">MAP</a>
