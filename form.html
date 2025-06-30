@@ -1,140 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Store-Check Form</title>
-<style>
-:root{--pink:#d6307a;--green:#28a745;--green-dark:#218838}
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{margin:0;background:#f7f7f7;padding:16px}
-h2{text-align:center;color:var(--pink)}
-form{max-width:650px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 0 10px #0001}
-label{display:block;font-weight:bold;margin:12px 0 6px;color:#333}
-input[type=text],input[type=number]{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-button{width:100%;padding:14px;background:var(--green);color:#fff;font-size:17px;border:none;border-radius:8px;cursor:pointer;margin-top:16px}
-button:hover{background:var(--green-dark)}
-#msg{margin-top:12px;text-align:center;font-weight:bold}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store-Check – Form</title>
+
+  <!-- ---------- ESTILO --------------------- -->
+  <style>
+    :root{
+      --pink:  #d6307a;
+      --green: #28a745;
+      --green-dark:#218838;
+    }
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+    body{margin:0;background:#f7f7f7;padding:16px}
+    h2{text-align:center;color:var(--pink)}
+    form{
+      max-width:650px;margin:auto;background:#fff;padding:20px;
+      border-radius:12px;box-shadow:0 0 10px #0001
+    }
+    label{display:block;font-weight:bold;margin:14px 0 6px;color:#333}
+    input[type=text],input[type=number]{
+      width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;margin-bottom:6px;
+    }
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    button{
+      width:100%;padding:14px;margin-top:18px;
+      background:var(--green);color:#fff;border:none;border-radius:8px;font-size:17px;cursor:pointer
+    }
+    button:hover{background:var(--green-dark)}
+    #msg{margin-top:14px;text-align:center;font-weight:bold}
+  </style>
 </head>
+
 <body>
+  <h2>Store Check Form</h2>
 
-<h2>Store Check Form</h2>
+  <form id="f">
+    <!-- ---------------------------------- dados básicos -->
+    <label>Store name
+      <input id="store" required>
+    </label>
+    <label>City
+      <input id="city"  required>
+    </label>
 
-<form id="f">
-  <!-- Dados básicos -->
-  <label>Store name<input id="store"   required></label>
-  <label>City      <input id="city"    required></label>
+    <!-- ---------------------------------- Tampico -->
+    <label>Tampico prices</label>
+    <div class="grid">
+      <input class="tampico" placeholder="2 L">
+      <input class="tampico" placeholder="1.5 L">
+      <input class="tampico" placeholder="1 L">
+      <input class="tampico" placeholder="450 ml">
+      <input class="tampico" placeholder="250 ml">
+      <input class="tampico" placeholder="200 ml">
+      <input class="tampico" placeholder="Tetra 1 L">
+      <input class="tampico" placeholder="Can">
+    </div>
 
-  <!-- Tampico -->
-  <label>Tampico prices</label>
-  <div class="grid">
-    <input class="tampico" placeholder="2 L">
-    <input class="tampico" placeholder="1.5 L">
-    <input class="tampico" placeholder="1 L">
-    <input class="tampico" placeholder="450 ml">
-    <input class="tampico" placeholder="250 ml">
-    <input class="tampico" placeholder="200 ml">
-    <input class="tampico" placeholder="Tetra 1 L">
-    <input class="tampico" placeholder="Can">
-  </div>
+    <!-- ---------------------------------- Del Valle -->
+    <label>Del Valle Frut prices</label>
+    <div class="grid">
+      <input class="del" placeholder="2 L">
+      <input class="del" placeholder="1.5 L">
+      <input class="del" placeholder="1 L">
+      <input class="del" placeholder="450 ml">
+      <input class="del" placeholder="250 ml">
+      <input class="del" placeholder="200 ml">
+      <input class="del" placeholder="Tetra 1 L">
+      <input class="del" placeholder="Can">
+    </div>
 
-  <!-- Del Valle -->
-  <label>Del Valle prices</label>
-  <div class="grid">
-    <input class="del" placeholder="2 L">
-    <input class="del" placeholder="1.5 L">
-    <input class="del" placeholder="1 L">
-    <input class="del" placeholder="450 ml">
-    <input class="del" placeholder="250 ml">
-    <input class="del" placeholder="200 ml">
-    <input class="del" placeholder="Tetra 1 L">
-    <input class="del" placeholder="Can">
-  </div>
+    <!-- ---------------------------------- Other brand -->
+    <label>Other brand name
+      <input id="otherBrand" placeholder="Brand Name">
+    </label>
+    <div class="grid">
+      <input class="other" placeholder="2 L">
+      <input class="other" placeholder="1.5 L">
+      <input class="other" placeholder="1 L">
+      <input class="other" placeholder="450 ml">
+      <input class="other" placeholder="250 ml">
+      <input class="other" placeholder="200 ml">
+      <input class="other" placeholder="Tetra 1 L">
+      <input class="other" placeholder="Can">
+    </div>
 
-  <!-- Other -->
-  <label>Other brand name<input id="otherBrand"></label>
-  <div class="grid">
-    <input class="other" placeholder="2 L">
-    <input class="other" placeholder="1.5 L">
-    <input class="other" placeholder="1 L">
-    <input class="other" placeholder="450 ml">
-    <input class="other" placeholder="250 ml">
-    <input class="other" placeholder="200 ml">
-    <input class="other" placeholder="Tetra 1 L">
-    <input class="other" placeholder="Can">
-  </div>
+    <!-- ---------------------------------- Fotos -->
+    <label>Photos (max 4)</label>
+    <input type="file" id="ph1" accept="image/*" capture="environment">
+    <input type="file" id="ph2" accept="image/*" capture="environment">
+    <input type="file" id="ph3" accept="image/*" capture="environment">
+    <input type="file" id="ph4" accept="image/*" capture="environment">
 
-  <!-- Fotos -->
-  <label>Photos (max 4)</label>
-  <input type="file" id="ph1" accept="image/*" capture="environment">
-  <input type="file" id="ph2" accept="image/*" capture="environment">
-  <input type="file" id="ph3" accept="image/*" capture="environment">
-  <input type="file" id="ph4" accept="image/*" capture="environment">
+    <!-- lat/lng ocultos -->
+    <input type="hidden" id="lat"><input type="hidden" id="lng">
 
-  <!-- Lat/Lng ocultos -->
-  <input type="hidden" id="lat"><input type="hidden" id="lng">
+    <button type="submit">Save Point-of-Sale</button>
+    <div id="msg"></div>
+  </form>
 
-  <button type="submit">Save Point-of-Sale</button>
-  <div id="msg"></div>
-</form>
+  <!-- ---------- SCRIPT ------------------- -->
+  <script>
+  /* Cole aqui a URL do seu Web-App */
+  const API = "https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec";
 
-<script>
-/* URL do Web App */
-const API = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec";
-
-/* Geo */
-if (navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(p=>{
-     lat.value=p.coords.latitude; lng.value=p.coords.longitude;
-  });
-}
-
-/* Converte arquivo → base64 */
-const toB64=file=>new Promise(r=>{
-  if(!file){r("");return;}
-  const fr=new FileReader();
-  fr.onload=()=>r(fr.result.split(",")[1]); fr.readAsDataURL(file);
-});
-
-f.addEventListener("submit",async ev=>{
-  ev.preventDefault(); msg.textContent="Saving…"; msg.style.color="#000";
-
-  /* Fotos em paralelo */
-  const photos=await Promise.all([
-    toB64(ph1.files[0]), toB64(ph2.files[0]),
-    toB64(ph3.files[0]), toB64(ph4.files[0])
-  ]);
-
-  /* Payload */
-  const data={
-    storeName : store.value.trim(),
-    city      : city.value.trim(),
-    latitude  : parseFloat(lat.value)||"",
-    longitude : parseFloat(lng.value)||"",
-    tampico   : [...document.querySelectorAll(".tampico")].map(i=>i.value.trim()),
-    delValle  : [...document.querySelectorAll(".del")].map(i=>i.value.trim()),
-    otherBrandName : otherBrand.value.trim(),
-    otherPrices    : [...document.querySelectorAll(".other")].map(i=>i.value.trim()),
-    photos
-  };
-
-  try{
-    const res = await fetch(API,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data)
-    });
-    const j = await res.json();
-    if(j.status==="OK"){
-      msg.textContent="Data saved ✓"; msg.style.color="green"; f.reset();
-    }else throw new Error(j.error||"Unknown error");
-  }catch(e){
-    msg.textContent="Error: "+e.message; msg.style.color="red";
-    console.error(e);
+  /* ---------------- geolocalização ---------------- */
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(p=>{
+      lat.value=p.coords.latitude;
+      lng.value=p.coords.longitude;
+    },err=>console.warn(err.message));
   }
-});
-</script>
+
+  /* Converte arquivo ➜ base-64 */
+  const toB64=file=>new Promise(res=>{
+    if(!file){res("");return;}
+    const fr=new FileReader();
+    fr.onload=()=>res(fr.result.split(",")[1]);
+    fr.readAsDataURL(file);
+  });
+
+  /* ---------------- envio ------------------------ */
+  f.addEventListener("submit",async e=>{
+    e.preventDefault();
+    msg.textContent="Saving…"; msg.style.color="#000";
+
+    /* fotos em paralelo */
+    const photos=await Promise.all([
+      toB64(ph1.files[0]),toB64(ph2.files[0]),
+      toB64(ph3.files[0]),toB64(ph4.files[0])
+    ]);
+
+    const data={
+      storeName : store.value.trim(),
+      city      : city.value.trim(),
+      latitude  : parseFloat(lat.value)||"",
+      longitude : parseFloat(lng.value)||"",
+      tampico   : [...document.querySelectorAll(".tampico")].map(i=>i.value.trim()),
+      delValle  : [...document.querySelectorAll(".del")].map(i=>i.value.trim()),
+      otherBrandName : otherBrand.value.trim(),
+      otherPrices    : [...document.querySelectorAll(".other")].map(i=>i.value.trim()),
+      photos
+    };
+
+    /* === Opção A: x-www-form-urlencoded (SEM pre-flight) === */
+    const body="data="+encodeURIComponent(JSON.stringify(data));
+
+    try{
+      const r=await fetch(API,{
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded"},
+        body
+      });
+      const j=await r.json();
+      if(j.status==="OK"){
+        msg.textContent="Data saved ✓";
+        msg.style.color="green";
+        f.reset();
+      }else throw new Error(j.error||"Server error");
+    }catch(err){
+      msg.textContent="Error: "+err.message;
+      msg.style.color="red";
+      console.error(err);
+    }
+  });
+  </script>
 </body>
 </html>
