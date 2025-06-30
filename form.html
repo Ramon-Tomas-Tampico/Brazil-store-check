@@ -1,55 +1,128 @@
-<script>
-/* --------- CONFIGURE AQUI -------------------------------- */
-const API = "https://script.google.com/macros/s/AKfycbzd1mNJljpYl5Ztr_jQA0uaJcQJ3RZb7PDIqD2I5JBUP0b83wc6oau3K-NDdNrcrFLt/exec";
-/* --------------------------------------------------------- */
-
-/* Geolocalização – preenche lat/lng ocultos */
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    document.getElementById("lat").value = pos.coords.latitude;
-    document.getElementById("lng").value = pos.coords.longitude;
-  }, err => console.warn("Geolocation error:", err.message));
-}
-
-/* Envio do formulário */
-document.getElementById("posForm").addEventListener("submit", async ev => {
-  ev.preventDefault();
-  const msg   = document.getElementById("msg");
-  msg.textContent = "Saving…"; msg.style.color = "black";
-
-  /* -------- monta payload JSON -------- */
-  const payload = {
-    storeName      : document.getElementById("store").value.trim(),
-    city           : document.getElementById("city").value.trim(),
-    latitude       : parseFloat(document.getElementById("lat").value) || "",
-    longitude      : parseFloat(document.getElementById("lng").value) || "",
-    tampico        : [...document.querySelectorAll(".tampico") ].map(i => i.value.trim()),
-    delValle       : [...document.querySelectorAll(".delvalle")].map(i => i.value.trim()),
-    otherBrandName : document.getElementById("otherBrand").value.trim(),
-    otherPrices    : [...document.querySelectorAll(".other")   ].map(i => i.value.trim()),
-    photos         : []  // implementar depois, se quiser fotos
-  };
-
-  /* -------- envia como x-www-form-urlencoded ------------- */
-  const body = "data=" + encodeURIComponent(JSON.stringify(payload));
-
-  try {
-    const res  = await fetch(API, {
-      method  : "POST",
-      headers : {"Content-Type":"application/x-www-form-urlencoded"},
-      body
-    });
-    const json = await res.json();
-
-    if (json.status === "OK") {
-      msg.textContent = "Data saved ✓"; msg.style.color = "green";
-      ev.target.reset();
-    } else {
-      throw new Error(json.error || "Unknown error");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Check Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 16px;
+      margin: 0;
     }
-  } catch (err) {
-    msg.textContent = "Error: " + err.message; msg.style.color = "red";
-    console.error(err);
-  }
-});
-</script>
+    h2 {
+      text-align: center;
+      color: #cc3366;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .block {
+      margin-bottom: 20px;
+    }
+    .block label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .brand-section {
+      margin-top: 16px;
+    }
+    .brand-section h3 {
+      color: #cc3366;
+      margin-bottom: 8px;
+    }
+    .brand-section input[type="text"] {
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Store Check Form</h2>
+  <form id="storeForm">
+    <div class="block">
+      <label for="storeName">Store Name</label>
+      <input type="text" id="storeName" required />
+    </div>
+    <div class="block">
+      <label for="city">City</label>
+      <input type="text" id="city" required />
+    </div>
+
+    <div class="brand-section">
+      <h3>Tampico</h3>
+      <input type="number" placeholder="2L" />
+      <input type="number" placeholder="1.5L" />
+      <input type="number" placeholder="1L" />
+      <input type="number" placeholder="450ml" />
+      <input type="number" placeholder="250ml" />
+      <input type="number" placeholder="200ml" />
+      <input type="number" placeholder="Tetra 1L" />
+      <input type="number" placeholder="Can" />
+    </div>
+
+    <div class="brand-section">
+      <h3>Del Valle</h3>
+      <input type="number" placeholder="2L" />
+      <input type="number" placeholder="1.5L" />
+      <input type="number" placeholder="1L" />
+      <input type="number" placeholder="450ml" />
+      <input type="number" placeholder="250ml" />
+      <input type="number" placeholder="200ml" />
+      <input type="number" placeholder="Tetra 1L" />
+      <input type="number" placeholder="Can" />
+    </div>
+
+    <div class="brand-section">
+      <h3>Other Brand</h3>
+      <input type="text" placeholder="Brand Name" />
+      <input type="number" placeholder="2L" />
+      <input type="number" placeholder="1.5L" />
+      <input type="number" placeholder="1L" />
+      <input type="number" placeholder="450ml" />
+      <input type="number" placeholder="250ml" />
+      <input type="number" placeholder="200ml" />
+      <input type="number" placeholder="Tetra 1L" />
+      <input type="number" placeholder="Can" />
+    </div>
+
+    <button type="submit">Send</button>
+  </form>
+
+  <script>
+    // Você pode integrar aqui o código de envio para o Apps Script
+    document.getElementById('storeForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      alert("Functionality to be added later...");
+    });
+  </script>
+</body>
+</html>
